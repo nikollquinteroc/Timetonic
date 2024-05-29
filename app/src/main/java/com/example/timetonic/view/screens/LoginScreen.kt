@@ -1,4 +1,4 @@
-package com.example.timetonic.view
+package com.example.timetonic.view.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,18 +25,22 @@ import androidx.compose.ui.unit.dp
 import com.example.timetonic.R
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    navigateToLandingPage: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LoginForm()
+        LoginForm(onClickLogin = navigateToLandingPage)
     }
 }
 
 @Composable
-fun LoginForm() {
+fun LoginForm(
+    onClickLogin: () -> Unit
+) {
     var username by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
@@ -74,6 +78,7 @@ fun LoginForm() {
                 //Call the viewmodel.login
                 isUsernameEmpty = false
                 isPasswordEmpty = false
+                onClickLogin()
             } else {
                 isUsernameEmpty = username.isEmpty()
                 isPasswordEmpty = password.isEmpty()
@@ -88,6 +93,6 @@ fun LoginForm() {
 @Composable
 fun LoginScreenPreview() {
     MaterialTheme {
-        LoginScreen()
+        LoginScreen(navigateToLandingPage = {})
     }
 }
