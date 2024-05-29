@@ -2,7 +2,9 @@
     <string name="app_name">Timetonic</string>
 
     <!--Login -->
+
     <string name="user_label">username or email</string>
     <string name="password_label">password</string>
     <string name="login_input_empty">This field cannot be empty</string>
+
 </resources>
