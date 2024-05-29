@@ -1,4 +1,4 @@
-package com.example.timetonic.ui.theme
+package com.example.timetonic.view.theme
 
 import android.app.Activity
 import android.os.Build
