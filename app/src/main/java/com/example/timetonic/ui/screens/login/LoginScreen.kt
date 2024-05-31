@@ -1,52 +1,87 @@
-package com.example.timetonic.view.screens
+package com.example.timetonic.ui.screens.login
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.timetonic.R
+import com.example.timetonic.data.model.login.LoginResponse
+
 
 @Composable
 fun LoginScreen(
-    navigateToLandingPage: () -> Unit
+    navigateToLandingPage: (LoginResponse) -> Unit,
+    loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.provideFactory())
 ) {
+    val loginUiState by loginViewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LoginForm(onClickLogin = navigateToLandingPage)
+        when {
+            loginUiState.isLoading -> {
+                CircularProgressIndicator()
+            }
+
+            loginUiState.loginResponse.o_u.isNotEmpty() && loginUiState.loginResponse.sesskey.isNotEmpty() -> {
+                navigateToLandingPage(loginUiState.loginResponse)
+            }
+
+            else -> {
+                LoginForm(
+                    errorMessageFromServer = loginUiState.error,
+                    loginViewModel = loginViewModel
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun LoginForm(
-    onClickLogin: () -> Unit
+    errorMessageFromServer: String,
+    loginViewModel: LoginViewModel
 ) {
     var username by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+    /*var username by rememberSaveable { mutableStateOf("android.developer@timetonic.com") }
+    var password by rememberSaveable { mutableStateOf("Android.developer1") }*/
+    var errorMessage by rememberSaveable { mutableStateOf(errorMessageFromServer) }
 
     var isUsernameEmpty by rememberSaveable { mutableStateOf(false) }
     var isPasswordEmpty by rememberSaveable { mutableStateOf(false) }
 
+    Image(painter = painterResource(id = R.drawable.timetonic), contentDescription = "Company Logo")
+    Spacer(modifier = Modifier.height(30.dp))
     OutlinedTextField(
         value = username,
         onValueChange = { username = it },
@@ -56,7 +91,8 @@ fun LoginForm(
                 Text(text = stringResource(id = R.string.login_input_empty))
             }
         },
-        isError = isUsernameEmpty
+        isError = isUsernameEmpty,
+        singleLine = true
     )
     OutlinedTextField(
         value = password,
@@ -74,11 +110,13 @@ fun LoginForm(
     Spacer(modifier = Modifier.height(16.dp))
     Button(
         onClick = {
+            errorMessage = ""
+
             if (username.isNotEmpty() && password.isNotEmpty()) {
-                //Call the viewmodel.login
                 isUsernameEmpty = false
                 isPasswordEmpty = false
-                onClickLogin()
+
+                loginViewModel.login(username = username, password = password)
             } else {
                 isUsernameEmpty = username.isEmpty()
                 isPasswordEmpty = password.isEmpty()
@@ -87,12 +125,19 @@ fun LoginForm(
     ) {
         Text(text = "Login")
     }
+    Spacer(modifier = Modifier.height(16.dp))
+    Text(
+        text = errorMessage.ifEmpty { "" },
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.error,
+        modifier = Modifier.padding(16.dp)
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
     MaterialTheme {
-        LoginScreen(navigateToLandingPage = {})
+        LoginScreen({})
     }
 }
