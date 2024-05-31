@@ -7,4 +7,6 @@
     <string name="password_label">password</string>
     <string name="login_input_empty">This field cannot be empty</string>
 
+    <!--Landing page-->
+    <string name="books">My Books</string>
 </resources>
