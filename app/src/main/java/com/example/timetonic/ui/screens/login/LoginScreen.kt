@@ -5,10 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -73,14 +73,16 @@ fun LoginForm(
 ) {
     var username by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-    /*var username by rememberSaveable { mutableStateOf("android.developer@timetonic.com") }
-    var password by rememberSaveable { mutableStateOf("Android.developer1") }*/
     var errorMessage by rememberSaveable { mutableStateOf(errorMessageFromServer) }
 
     var isUsernameEmpty by rememberSaveable { mutableStateOf(false) }
     var isPasswordEmpty by rememberSaveable { mutableStateOf(false) }
 
-    Image(painter = painterResource(id = R.drawable.timetonic), contentDescription = "Company Logo")
+    Image(
+        painter = painterResource(id = R.drawable.timetonic),
+        contentDescription = "Company Logo",
+        modifier = Modifier.size(200.dp)
+    )
     Spacer(modifier = Modifier.height(30.dp))
     OutlinedTextField(
         value = username,
@@ -92,7 +94,8 @@ fun LoginForm(
             }
         },
         isError = isUsernameEmpty,
-        singleLine = true
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
     )
     OutlinedTextField(
         value = password,

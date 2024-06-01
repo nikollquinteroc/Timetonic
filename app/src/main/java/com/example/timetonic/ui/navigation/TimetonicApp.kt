@@ -66,7 +66,18 @@ fun TimeTonicApp(
                 navArgument(B_C.route) { type = NavType.StringType }
             )
         ) {
-            LandingDetailScreen()
+            LandingDetailScreen(
+                navigateToLogin = {
+                    navController.navigate(Login.route) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                    }
+                },
+                navigateUp = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }
