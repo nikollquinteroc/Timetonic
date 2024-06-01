@@ -25,6 +25,10 @@ This app showcases:
 * Kotlin
 * Jetpack Compose
 
+### Loading images
+
+* Coil
+
 ### Architecture
 
 * MVVM (Model-View-ViewModel)
